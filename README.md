@@ -1,1 +1,1 @@
-Authentication Template using Java, Spring boot and React.
+Auth application using Java, Spring boot, SQL and React.
