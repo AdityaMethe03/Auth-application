@@ -45,7 +45,7 @@ public class User {
   @PrePersist // Before any new record for this entity is created
   protected void onCreate() {
     Instant now = Instant.now();
-    if(createdAt == null) createdAt = now;
+    if (createdAt == null) createdAt = now;
     updatedAt = now;
   }
 
