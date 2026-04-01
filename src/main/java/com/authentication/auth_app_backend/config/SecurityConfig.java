@@ -43,14 +43,11 @@ public class SecurityConfig {
         .authorizeHttpRequests(
             authorizedHttpRequests ->
                 authorizedHttpRequests
-                    .requestMatchers("/api/v1/auth/register")
+                    .requestMatchers(AppConstants.AUTH_PUBLIC_URLS)
                     .permitAll()
-                    .requestMatchers("/api/v1/auth/login")
-                    .permitAll()
-                    .requestMatchers("/api/v1/auth/refresh")
-                    .permitAll()
-                    .requestMatchers("/api/v1/auth/logout")
-                    .permitAll()
+                    // OR
+                    // .requestMatchers("/api/v1/example")
+                    // .permitAll()
                     .anyRequest()
                     .authenticated())
         .oauth2Login(

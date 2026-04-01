@@ -8,12 +8,10 @@ import com.authentication.auth_app_backend.repositories.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.UUID;
-
-import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +63,14 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String name = oAuth2User.getAttributes().getOrDefault("name", "").toString();
         String picture = oAuth2User.getAttributes().getOrDefault("picture", "").toString();
         User newUser =
-            User.builder().email(email).name(name).image(picture).enable(true).provider(Provider.GOOGLE).providerId(googleId).build();
+            User.builder()
+                .email(email)
+                .name(name)
+                .image(picture)
+                .enable(true)
+                .provider(Provider.GOOGLE)
+                .providerId(googleId)
+                .build();
 
         user = userRepository.findByEmail(email).orElseGet(() -> userRepository.save(newUser));
       }
@@ -76,12 +81,19 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String picture = oAuth2User.getAttributes().getOrDefault("avatar_url", "").toString();
 
         String email = (String) oAuth2User.getAttributes().get("email");
-        if(email==null) {
+        if (email == null) {
           email = name + "@github.com";
         }
 
         User newUser =
-            User.builder().email(email).name(name).image(picture).enable(true).provider(Provider.GITHUB).providerId(githubId).build();
+            User.builder()
+                .email(email)
+                .name(name)
+                .image(picture)
+                .enable(true)
+                .provider(Provider.GITHUB)
+                .providerId(githubId)
+                .build();
 
         user = userRepository.findByEmail(email).orElseGet(() -> userRepository.save(newUser));
       }
@@ -93,7 +105,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     // jwt token - redirect to frontend with token
 
-//    user --> revoke all refresh tokens
+    //    user --> revoke all refresh tokens
 
     // will create refresh token
     String jti = UUID.randomUUID().toString();
@@ -110,9 +122,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     String accessToken = jwtService.generateAccessToken(user);
     String refreshToken = jwtService.generateRefreshToken(user, refreshTokenOb.getJti());
 
-    cookieService.attachRefreshCookie(response, refreshToken, (int) jwtService.getRefreshTtlSeconds());
+    cookieService.attachRefreshCookie(
+        response, refreshToken, (int) jwtService.getRefreshTtlSeconds());
 
-//    response.getWriter().write("Login successful");
+    //    response.getWriter().write("Login successful");
     response.sendRedirect(frontEndSuccessUrl);
   }
 }
